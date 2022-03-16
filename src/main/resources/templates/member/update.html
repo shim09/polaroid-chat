@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="/js/join.js"></script>
+</head>
+<body>
+<form action="/member/update" id="updateForm" method="post" enctype="multipart/form-data">
+
+    <input type="file" name="memberFile" id="file">
+
+    닉네임 <input type="text" th:value="${member.memberNickname}" id="memberNickname" name="memberNickname" placeholder="영문 대 소문자, 숫자, 특수문자('_')중에서 입력하세요" onkeyup="nicknameDuplicateCheck()"> <br>
+    <p id="nicknameDuplicate"></p>
+
+    핸드폰 번호 <input type="text" th:value="${member.memberPhone}" id="memberPhone" name="memberPhone" placeholder="'-' 없이 숫자만으로 핸드폰 번호를 입력하세요" onblur="pnCheck()"> <br>
+    <p id="pnOut"></p>
+
+    <input type="text" id="sample6_postcode" placeholder="우편번호">
+    <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+    <input type="text" id="sample6_address" placeholder="주소" onblur="address()"><br>
+    <input type="text" id="sample6_detailAddress" placeholder="상세주소" onblur="address()">
+    <input type="text" id="sample6_extraAddress" placeholder="참고항목">
+        <p id="addressOut"></p>
+    <input type="hidden" id="memberAddress" name="memberAddress" placeholder="주소"> <br>
+
+    <button type="button" onclick="updateMember()"></button>
+
+</form>
+
+<a href="/member/resign">회원탈퇴</a>
+</body>
+</html>

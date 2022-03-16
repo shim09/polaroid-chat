@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <title>Title</title>
+</head>
+<style>
+    .member_img_box {
+        width: 10%;
+        margin: 0 auto;
+        overflow:hidden;
+        position:relative;
+    }
+
+    .member_img {
+        width: 100%;
+        height: 100%;
+        object-fit:cover;
+    }
+</style>
+<body>
+<table class="table table-striped table-hover text-center">
+    <thead>
+    <tr>
+        <th scope="col">프로필 사진</th>
+        <th scope="col">회원 닉네임</th>
+        <th scope="col">최근 메시지</th>
+        <th scope="col">메시지 시간</th>
+        <th scope="col">입장</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each = "chatRoom:${chatRooms}">
+        <td class="member_img_box"><img class="member_img" style="width: 100px" th:src="@{|/image/profile/${chatRoom.member.memberFilename}|}"></td>
+        <td th:text = "${chatRoom.writer}"></td>
+        <td th:text = "${chatRoom.lastMessage}"></td>
+        <td th:text="${#temporals.format(chatRoom.time, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td class="row" style="height:90px">
+            <form class = "form-signing" action = "/chat/newChat" method = "POST" onsubmit = "return nameChk();">
+                <a class="btn btn-default pull-right" th:href = "@{/personalChat/{id} (id = ${chatRoom.id})}" onclick="window.open(this.href, '_blank', 'width=500, height=400, toolbars=no, scrollbars=yes, menubar=no,scrollbars=no'); return false;">입장</a>
+<!--                <div class="form-group col-xs-10">-->
+<!--&lt;!&ndash;                    <input type="hidden" id = "receiver" name= "receiver" th:value = "${chatRoom.writer}" class="form-control" placeholder="상대방 이름을 입력하세요" maxlength="20" required>&ndash;&gt;-->
+<!--                    <input class="btn btn-default pull-right" th:href = "@{/personalChat/{id} (id = ${chatRoom.id})}" onclick="window.open(this.href, '_blank', 'width=500, height=400, toolbars=no, scrollbars=yes, menubar=no,scrollbars=no'); return false;">-->
+<!--                </div>-->
+<!--                <div class="form-group col-xs-2">-->
+<!--                    <button type = "submit" class="btn btn-default pull-right" >채팅방 만들기</button>-->
+<!--                    <div class="clearfix"></div>-->
+<!--                </div>-->
+<!--            </form>-->
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!--<div class="row" style="height:90px">-->
+<!--    <form class = "form-signing" action = "/chat/newChat" method = "POST" onsubmit = "return nameChk();">-->
+<!--        <div class="form-group col-xs-10">-->
+<!--            <input type="text" id = "receiver" name= "receiver" class="form-control" placeholder="상대방 이름을 입력하세요" maxlength="20" required>-->
+<!--            <input type="hidden" id = "sender" th:value = "${nickname}" name= "sender" class="form-control" placeholder="상대방 이름을 입력하세요" maxlength="20" required>-->
+<!--        </div>-->
+<!--        <div class="form-group col-xs-2">-->
+<!--            <button type = "submit" class="btn btn-default pull-right" >채팅방 만들기</button>-->
+<!--            <div class="clearfix"></div>-->
+<!--        </div>-->
+<!--    </form>-->
+<!--</div>-->
+</body>
+
+<th:block layout:fragment="script">
+    <script th:inline = "javascript">
+        /* <![CDATA[*/
+        var id = /*[[${userId}]]*/;
+        /* ]]> */
+        function mypage(){
+            if(id == 0){
+                alert("로그인 후 이용해주세요");
+            }
+            else{
+                window.location.href = "/users/myPage/" + id;
+            }
+        }
+        /* <![CDATA[*/
+        var nickname = /*[[${nickname}]]*/;
+        /* ]]> */
+        var stompClient = null;
+        connect();
+        function connect() {
+            var socket = new SockJS('/chat');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function () {
+                stompClient.subscribe('/topic/' + nickname, function (e) {
+                    if(e.body.toString() == "notice"){
+                        alertClosing('noticeCome',2000);
+                    }
+                    else{
+                        alertClosing('comeMessage',2000);
+                    }
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+        }
+        window.onbeforeunload = function(e){
+            disconnect();
+        }
+
+        function alertClosing(selector, delay){
+            document.getElementById(selector).style.display = "block";
+            window.setTimeout(function(){
+                document.getElementById(selector).style.display = "none";
+            },delay);
+        }
+        function logout(){
+            $("#pop").modal();
+            document.getElementById("y").onclick = function(){
+                window.location.href="/logout";
+            }
+            document.getElementById("n").onclick = function(){
+                $("#pop").modal("hide");
+            }
+        }
+        $(function(){
+            $("#receiver").autocomplete({
+                source : "autocomplete",
+                autoFocus : true,
+                delay : 100,
+                select: function( event, ui ) {
+                    // 만약 검색리스트에서 선택하였을때 선택한 데이터에 의한 이벤트발생
+                    this.value = ui.item.value;
+                    $("#receiver").val(ui.item.value);
+                    return false;
+                }
+            });
+        })
+        function nameChk(){
+            var flag = false;
+            $.ajax({
+                type:'GET',
+                url: '/users/nameChk/' + $("#receiver").val(),
+                contentType: 'application/json; charset=utf-8',
+                async: false
+            }).done(function(e){
+                if(e == "success"){
+                    console.log(e);
+                    flag = true;
+                }
+                else {
+                    flag = false;
+                    alertClosing("nameMessage",2000);
+                }
+            }).fail(function(e){
+                flag = false;
+                alertClosing("failMessage",2000);
+            })
+            return flag;
+        }
+        function notice(){
+            if(nickname == ""){
+                noticeList = document.getElementById("noticeList");
+                noticeList.innerHTML = "";
+            }
+            else {
+                $.ajax({
+                    type:'GET',
+                    url: '/users/notice',
+                    data : {name : nickname},
+                    dataType : 'json',
+                    contentType: 'application/json; charset=utf-8',
+                }).done(function(e){
+                    console.log(e);
+                    noticeList = document.getElementById("noticeList");
+                    noticeList.innerHTML = "";
+                    for(var i= 0; i< e.link.length;++i){
+                        noticeList.innerHTML = "<li><strong>" + e.content[i] + "</strong><br><small>" + dateParse(e.time[i])+ "</small> <button class = 'btn btn-default' onclick=goLink('" +  e.link[i] + "');>이동</button></li><hr>" + noticeList.innerHTML;
+                    }
+                }).fail(function(e){
+                    alert("잠시 후 시도해주세요");
+                })
+            }
+
+        }
+        function dateParse(e){
+            str = e.substring(0,4) + "-" + e.substring(5,7) + "-" + e.substring(8,10) +" " + e.substring(11,19);
+            return str;
+        }
+        function goLink(e){
+            window.location.href = e;
+        }
+    </script>
+</th:block>
+</html>

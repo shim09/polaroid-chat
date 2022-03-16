@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="/js/selfAuthentication.js"></script>
+</head>
+<body>
+<form action="/member/selfAuthentication" method="post" id="authenticationForm">
+    <input type="text" id="code" placeholder="인증번호" onblur="codeCheck()">
+    <button type="button" onclick="submitMail()">인증번호 받기</button>
+    <p id="output"></p>
+    <button type="button" id="joinButton"onclick="joinSubmit()">다음</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/css/member_delete.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="/js/common.js"></script>
+    <title>POLAROID</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        function confirmFunction(){
+            const con=document.getElementById("confirm").value;
+            const checkResult = document.getElementById('confirmOut');
+            if(con=="POLAROID 탈퇴하기") {
+                confirmForm.submit();
+            }
+            else{
+                checkResult.innerText="다시입력하세요"
+                checkResult.style.color="red"
+            }
+
+        }
+    </script>
+</head>
+<body>
+<!--<p th:text="${member.memberNickname}"> 님 회원 탈퇴하시겠습니까? </p>-->
+<!--정말로 탈퇴를 원하신다면 'POLAROID 탈퇴하기' 를 입력해주세요.-->
+<!--<form action="/member/resign" method="post" id="confirmForm">-->
+<!--    <input type="text" id="confirm">-->
+<!--    <p id="confirmOut"></p>-->
+<!--    <button type="button" id="resignButton" onblur="confirmFunction()">회원탈퇴</button>-->
+<!--</form>-->
+
+<!-- header -->
+<div class="header">
+    <div class="max_box_2 vertical_box">
+        <div class="header_logo vertical_mid">
+            <img class="header_logo_img" src="/image/logo_white.png" onclick="location.href='/main'" />
+        </div>
+        <div class="header_search_box vertical_mid">
+            <input class="header_search_input fs_16" type="text" placeholder="Search" />
+            <div class="header_search_btn">
+                <img class="header_search_btn_img" src="/image/search.png" />
+            </div>
+        </div>
+        <div class="header_right vertical_mid">
+            <!-- 채팅 -->
+            <div class="header_chat">
+                <img class="header_chat_img" src="/image/chat.png" />
+            </div>
+            <!-- 좋아요 모아보기 -->
+            <div class="header_like">
+                <img class="header_like_img" src="/image/like.png" />
+            </div>
+            <!-- 사용자 정보 -->
+            <div class="header_user" id="userToggleButton">
+                <img class="header_user_img" th:src="@{|/image/profile/${member.memberFilename}|}" />
+            </div>
+            <div class="header_user_toggle_box" id="userToggleMenu">
+                <input class="header_user_toggle_btn fs_14" type="button" value="마이페이지" onclick="location.href='/my_page'" />
+                <input class="header_user_toggle_btn fs_14" id="show" type="button"  onclick="location.href='/logout'" value="로그아웃" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="contents" style="background-color: #fff !important;">
+    <div class="max_box_3 pt_60">
+        <div class="memberDelete_box">
+            <div class="vertical_box">
+                <img class="memberDelete_profile vertical_mid" th:src="@{|/image/profile/${member.memberFilename}|}" alt="">
+                <p class="memberDelete_text vertical_mid" th:text="${member.memberNickname}"> 님 회원 탈퇴하시겠습니까? </p>
+            </div>
+            <div class="memberDelete_check_box">
+                <span class="memberDelete_check_text">
+                    정말로 탈퇴를 원하신다면
+                    <span class="memberDelete_check_text_2">POLAROID 탈퇴하기</span>
+                    를 입력해주세요.
+                </span>
+            </div>
+            <form action="/member/resign" method="post" id="confirmForm">
+                <input class="memberDelete_check_input" id="confirm" type="text" placeholder="오타, 띄어쓰기에 주의해서 입력해주세요."/>
+                <p class="memberDelete_check_text" id="confirmOut"></p>
+                <input class="memberDelete_save_btn" id="resignButton" onblur="confirmFunction()" type="button" value="탈퇴하기" />
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

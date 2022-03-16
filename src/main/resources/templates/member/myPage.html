@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+프로필 <img th:src="@{|/image/profile/${member.memberFilename}|}" alt=""> <br>
+닉네임 <p th:text="${member.memberNickname}">  </p>
+팔로워 <p th:text="${follower}">  </p>
+팔로잉 <p th:text="${following}">  </p>
+
+<div th:if="${member.memberRole=='ROLE_SELLER'}">
+    <p>판매자</p>
+</div>
+
+게시물 수
+<br>
+
+<a href="member/update"> 정보수정 </a>
+<a th:href="@{member/likeList/${member.id}}">좋아요 목록</a>
+<a th:href="@{member/pickList/${member.id}}">찜 목록</a>
+<a href="member/board/write">글작성</a>
+
+<div th:if="${member.memberRole=='ROLE_SELLER'}">
+    <p>판매자</p>
+</div>
+
+<div th:if="${member.memberRole=='ROLE_SELLER'}">
+    <button><a href=""> 내 쇼핑몰</a> </button>
+</div>
+
+<div th:if="${member.memberRole!='ROLE_SELLER'}">
+    <button><a href="sellerRole"> 판매자 신청 </a> </button>
+</div>
+
+</body>
+</html>

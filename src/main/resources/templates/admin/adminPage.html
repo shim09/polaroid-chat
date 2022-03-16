@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th scope="col">판매자 권한 신청 번호</th>
+        <th scope="col">프로필</th>
+        <th scope="col">닉네임</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="sellerList: ${sellerList}">
+        <td th:text="${sellerList.sellerId}"></td>
+        <td><img th:src="@{|/profile/${sellerList.memberId.memberFilename}|}" alt=""> <br></td>
+        <td><a th:href="@{|/admin/giveRole/${sellerList.memberId.id}|}" th:text="${sellerList.memberId.memberNickname}"></a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

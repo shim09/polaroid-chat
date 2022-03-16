@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+프로필 <img th:src="@{|/image/profile/${member.memberFilename}|}" alt=""> <br>
+닉네임 <p th:text="${member.memberNickname}">  </p>
+팔로워 <p th:text="${follower}">  </p>
+팔로잉 <p th:text="${following}">  </p>
+
+팔로잉 리스트
+<table>
+    <thead>
+    <tr>
+        <th>프로필</th>
+        <th>닉네임</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="followingList: ${followingList}">
+        <td th:text="${followingList.followFollowing.memberFilename}"></td>
+        <td th:text="${followingList.followFollowing.memberNickname}"></td>
+    </tr>
+    </tbody>
+</table>
+
+팔로워 리스트
+<table>
+    <thead>
+    <tr>
+        <th>프로필</th>
+        <th>닉네임</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="followerList: ${followerList}">
+        <td th:text="${followerList.memberId.memberFilename}"></td>
+        <td th:text="${followerList.memberId.memberNickname}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
